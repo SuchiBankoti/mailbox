@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 
 // const loginApi ="https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBVCqLAhTyXyQ5ZA_q0AqV-dtjxAbu5-Zc"
 const signupApi = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVCqLAhTyXyQ5ZA_q0AqV-dtjxAbu5-Zc";
 
 
-export default function SignUp() {
+export default function SignUp(props) {
     const [formdata, setFormdata] = useState({
         email: "",
         password: "",
@@ -32,6 +33,7 @@ export default function SignUp() {
             if (res.ok) {
                 const data = res.json();
                 console.log(data)
+                setErr("")
             } else {
                  console.log("Request failed with status: " + res.status);
             }
@@ -65,13 +67,16 @@ export default function SignUp() {
             <Form.Control type="password" placeholder="Password" name="password" value={formdata.confirmPassword} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Text style={{color:"red"}}>{err}</Form.Text>
-    </Form>
-            <Button variant="primary" onClick={() => {
-                if (formdata.email && formdata.password === formdata.confirmPassword)
-                    user_sign_up()
-            }}>
-        Submit
-       </Button>
+            </Form>
+            {(err === "" && formdata.email && formdata.password === formdata.confirmPassword) ? <Link to="/welcome">
+                <Button variant="primary" onClick={() => {
+                    if (formdata.email && formdata.password === formdata.confirmPassword)
+                        user_sign_up()
+                }}>
+                    SignUp
+                </Button>
+            </Link>:<Button onClick={()=>setErr("invalid credentials")}>SignUp</Button>}
+            <div onClick={props.handleLogin}>Already have an account?<span>Login</span></div>
         </div>
     )
 }
