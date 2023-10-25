@@ -9,7 +9,6 @@ export default function Login(props) {
         email: "",
         password: "",
     })
-    const [err, setErr] = useState(""); // Add state for error message
     function handleChange(e) {
         setFormdata(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
@@ -27,13 +26,11 @@ export default function Login(props) {
             })
         }).then(res => {
             if (res.ok) {
-                setErr("")
+                localStorage.setItem('mymail',formdata.email)
             } else {
-                setErr("Incorrect email/password"); // Set the error message
                 console.log("Request failed with status: " + res.status);
             }
         }).catch(e => {
-            setErr("An error occurred. Please try again."); // Set the error message
             console.log(e);
         });
     }
@@ -51,8 +48,6 @@ export default function Login(props) {
                     <Form.Control type="password" placeholder="Password" name="password" value={formdata.password} onChange={handleChange} />
                 </Form.Group>
             </Form>
-
-            {err && <div style={{ color: "red" }}>{err}</div>}
 
             <Link to="/welcome">
                 <Button variant="primary"

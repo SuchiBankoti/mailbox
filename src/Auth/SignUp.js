@@ -32,6 +32,7 @@ export default function SignUp(props) {
         }).then(res => {
             if (res.ok) {
                 const data = res.json();
+                localStorage.setItem('mymail',formdata.email)
                 console.log(data)
                 setErr("")
             } else {
