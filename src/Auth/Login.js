@@ -1,39 +1,23 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { authMailLogin } from "../Store/CreateSlice";
 
-const loginApi ="https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBVCqLAhTyXyQ5ZA_q0AqV-dtjxAbu5-Zc"
 
 export default function Login(props) {
     const [formdata, setFormdata] = useState({
         email: "",
         password: "",
     })
+    const dispatch=useDispatch()
     function handleChange(e) {
         setFormdata(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
-    function user_login() {
-        fetch(loginApi, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application.json"
-            },
-            body: JSON.stringify({
-                email: formdata.email,
-                password: formdata.password,
-                returnSecureToken: true,
-            })
-        }).then(res => {
-            if (res.ok) {
-                localStorage.setItem('mymail',formdata.email)
-            } else {
-                console.log("Request failed with status: " + res.status);
-            }
-        }).catch(e => {
-            console.log(e);
-        });
-    }
+    const user_login = () => {
+       dispatch(authMailLogin(formdata))
+   }
 
     return (
         <div>

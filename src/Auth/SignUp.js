@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { authMailSignUp } from "../Store/CreateSlice";
 
 
-// const loginApi ="https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBVCqLAhTyXyQ5ZA_q0AqV-dtjxAbu5-Zc"
-const signupApi = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVCqLAhTyXyQ5ZA_q0AqV-dtjxAbu5-Zc";
 
 
 export default function SignUp(props) {
@@ -13,35 +13,14 @@ export default function SignUp(props) {
         password: "",
         confirmPassword:""
     })
+    const dispatch=useDispatch()
     const[err,setErr]=useState("")
     function handleChange(e) {
         setFormdata(prev => ({ ...prev, [e.target.name]: e.target.value }))
         
     }
     function user_sign_up() {
-        fetch(signupApi, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application.json"
-            },
-            body: JSON.stringify({
-                email: formdata.email,
-                password: formdata.password,
-                returnSecureToken: true,
-            })
-        }).then(res => {
-            if (res.ok) {
-                const data = res.json();
-                localStorage.setItem('mymail',formdata.email)
-                console.log(data)
-                setErr("")
-            } else {
-                 console.log("Request failed with status: " + res.status);
-            }
-        }).catch(e => {
-            console.log(e)
-            
-        })
+        dispatch(authMailSignUp(formdata))
     }
     useEffect(() => {
         if (formdata.password.length>=8 && formdata.password !== formdata.confirmPassword) {
