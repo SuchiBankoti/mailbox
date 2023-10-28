@@ -25,7 +25,7 @@ export default function Welcome() {
             <Navbar/>
          <Tabs
       defaultActiveKey="inbox"
-      id="uncontrolled-tab-example"
+      id="uncontrolled-tab"
       className="mb-3"
       >
      <Tab eventKey="compose" title="Compose">

@@ -13,7 +13,8 @@ export default function Mail(props) {
   const dispatch = useDispatch()
   function update_read_status() {
     dispatch(updateMail({
-      id:id,
+      id: id,
+      usermail:usermail,
       maildata: props.mail,
       read: true,
       deleted: false,
@@ -25,7 +26,8 @@ export default function Mail(props) {
   function update_star_status() {
     if (receiver === usermail) {
     dispatch(updateMail({
-      id:id,
+      id: id,
+      usermail:usermail,
       maildata: props.mail,
       read:read,
       deleted: false,
@@ -52,7 +54,7 @@ export default function Mail(props) {
                     <div className="mail-bar">
           <div
             className="circle" style={{ visibility: read ? "hidden" : "visible" ,display:props.sent?"none":"block"}}></div>
-          <FaStar style={{color:star?"yellow":"grey",display:props.sent?"none":"block"}} onClick={update_star_status}/>
+          <FaStar style={{color:star[usermail]?"yellow":"grey",display:props.sent?"none":"block"}} onClick={update_star_status}/>
           <div>{props.sent?receiver:sender}</div>
                         <div>
                         {subject}

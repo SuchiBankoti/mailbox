@@ -87,8 +87,14 @@ export const addMail = createAsyncThunk(
                 subject: payload.maildata.subject,
                 body: payload.maildata.body,
                 read: false,
-                deleted: false,
-                star:false
+                deleted: {
+                    [payload.usermail]: false,
+                    [payload.maildata.emailAddress]:false
+                },
+                star:{
+                    [payload.usermail]: false,
+                    [payload.maildata.emailAddress]:false
+                }
             })
           }).then((res) => {
               if (res.ok) {
@@ -116,8 +122,14 @@ export const updateMail = createAsyncThunk(
                 subject: payload.maildata.subject,
                 body: payload.maildata.body,
                 read: payload.read,
-                deleted: payload.delete,
-                star:payload.star
+                deleted: {
+                    ...payload.maildata.delete,
+                    [payload.usermail]:payload.delete
+                },
+                star: {
+                    ...payload.maildata.star,
+                    [payload.usermail]:payload.star
+                }
             })
           }).then((res) => {
               if (res.ok) {
@@ -143,7 +155,7 @@ const mailboxSlice = createSlice({
             state.activeInboxId=action.payload
         },
         activateStarredId: (state, action) => {
-            state.activateStarredId=action.payload
+            state.activeStarredId=action.payload
         }
     },
     extraReducers: {
