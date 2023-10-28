@@ -4,13 +4,16 @@ import { createSlice , createAsyncThunk} from "@reduxjs/toolkit";
 
 const signupApi = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVCqLAhTyXyQ5ZA_q0AqV-dtjxAbu5-Zc";
 const loginApi ="https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBVCqLAhTyXyQ5ZA_q0AqV-dtjxAbu5-Zc"
-const api = "https://expense-tracker-25d4f-default-rtdb.asia-southeast1.firebasedatabase.app/allmail.json";
+const api = "https://expense-tracker-25d4f-default-rtdb.asia-southeast1.firebasedatabase.app/allmail";
 
 const initialState = {
     allMail: [],
     isLoading: true,
     trackmail: 0,
     usermail: null,
+    activeSentboxId:null,
+    activeStarredId:null,
+    activeInboxId:null
     
 }
 export const authMailLogin = createAsyncThunk(
@@ -67,13 +70,13 @@ export const authMailSignUp = createAsyncThunk(
 export const getAllMail = createAsyncThunk(
     "mailbox/getAllMail",
         () => {
-        return fetch(api).then(data=>data.json()).catch(e=>console.log(e))
+        return fetch(`${api}.json`).then(data=>data.json()).catch(e=>console.log(e))
     }
 )
 export const addMail = createAsyncThunk(
     "mailbox/addMail",
     (payload) => {
-        return fetch(api, {
+        return fetch(`${api}.json`, {
             method: "POST",
             headers: {
               "Content-type": "application/json"
@@ -82,7 +85,39 @@ export const addMail = createAsyncThunk(
                 sender: payload.usermail,
                 receiver: payload.maildata.emailAddress,
                 subject: payload.maildata.subject,
-                body: payload.maildata.body
+                body: payload.maildata.body,
+                read: false,
+                deleted: false,
+                star:false
+            })
+          }).then((res) => {
+              if (res.ok) {
+                return res.json();
+            }else {
+                return Promise.reject("Request failed with status: " + res.status);
+              }
+          }).catch(e => {
+              console.log(e)
+              return Promise.reject(e);
+          });
+    }
+)
+export const updateMail = createAsyncThunk(
+    "mailbox/updateMail",
+    (payload) => {
+        return fetch(`${api}/${payload.id}.json`, {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                sender: payload.maildata.sender,
+                receiver: payload.maildata.receiver,
+                subject: payload.maildata.subject,
+                body: payload.maildata.body,
+                read: payload.read,
+                deleted: payload.delete,
+                star:payload.star
             })
           }).then((res) => {
               if (res.ok) {
@@ -97,12 +132,19 @@ export const addMail = createAsyncThunk(
     }
 )
 
-
 const mailboxSlice = createSlice({
     name: "mailbox",
     initialState,
     reducers: {
-        
+        activateSentboxId: (state, action) => {
+            state.activeSentboxId=action.payload
+        },
+        activateInboxId: (state, action) => {
+            state.activeInboxId=action.payload
+        },
+        activateStarredId: (state, action) => {
+            state.activateStarredId=action.payload
+        }
     },
     extraReducers: {
         [getAllMail.pending]: (state) => {
@@ -140,7 +182,6 @@ const mailboxSlice = createSlice({
         [authMailLogin.fulfilled]: (state, action) => {
             state.isLoading = false
             state.usermail = action.payload.email
-            console.log('loginpayload',action.payload)
         },
         [authMailLogin.rejected]: (state) => {
             state.isLoading=false
@@ -151,17 +192,26 @@ const mailboxSlice = createSlice({
         [authMailSignUp.fulfilled]: (state, action) => {
             state.isLoading = false
             state.usermail = action.payload.email
-            console.log("signuppaylod",action.payload)
         },
         [authMailSignUp.rejected]: (state) => {
             state.isLoading=false
         },
-       
+        
+        [updateMail.pending]: (state) => {
+            state.isLoading=true
+        },
+        [updateMail.fulfilled]: (state, action) => {
+            state.isLoading = false
+            state.trackmail=state.trackmail+1
+        },
+        [updateMail.rejected]: (state) => {
+            state.isLoading=false
+        },
     }
 
 });
 
-export const{}=mailboxSlice.actions
+export const{activateInboxId,activateSentboxId,activateStarredId}=mailboxSlice.actions
 
 export default mailboxSlice.reducer
 
