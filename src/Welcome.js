@@ -2,27 +2,36 @@ import React, { useEffect} from "react";
 import "./Welcome.css"
 import { Tabs,Tab} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllMail } from "./Store/CreateSlice";
+import { getAllMail, getUsermail } from "./Store/CreateSlice";
 import ComposeMail from "./Components/ComposeMail";
 import Inbox from "./Components/Inbox";
 import SentBox from "./Components/Sent";
 import Navbar from "./Components/Navbar";
 import Starred from "./Components/Starred";
 import OpenMail from "./Components/OpenMail";
+import Deleted from "./Components/Deleted";
 
 
 export default function Welcome() {
     const { trackmail,allMail,activeInboxId,activeSentboxId,usermail} = useSelector(state => state.mailbox) 
     const dispatch=useDispatch()
-    console.log('aalmao',allMail)
-    useEffect(() => {
-       dispatch(getAllMail())
-    },[trackmail])
-   const unread_mail=allMail.filter(mail => mail.receiver === usermail && !mail.read).length
+  useEffect(() => {
+    dispatch(getAllMail())
+    
+    const intervalId = setInterval(() => {
+      dispatch(getAllMail())
+    }, 2000)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+    },[trackmail,usermail])
+  const unread_mail =allMail.filter(mail => mail.receiver === usermail && !mail.read && !mail.deleted[usermail]).length
     
     return (
         <>
-            <Navbar/>
+        <Navbar />
+        <button onClick={()=>dispatch(getAllMail())}>Refresh</button>
          <Tabs
       defaultActiveKey="inbox"
       id="uncontrolled-tab"
@@ -42,7 +51,7 @@ export default function Welcome() {
         <Starred/>
       </Tab>
       <Tab eventKey="deleted" title="Deleted" >
-        Tab content for Deleted
+        <Deleted/>
                 </Tab>
                
             </Tabs>

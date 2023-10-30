@@ -27,6 +27,8 @@ export default function SignUp(props) {
             setErr('passwords dont match')
         } else if(formdata.password.length>0 && formdata.password.length<8){
             setErr("password should atleast be 8 characters")
+        } else {
+            setErr("")
         }
     },[formdata.email,formdata.password,formdata.confirmPassword])
     return (
@@ -44,7 +46,7 @@ export default function SignUp(props) {
             </Form.Group>
         <Form.Group controlId="formBasicPassword">
            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" name="password" value={formdata.confirmPassword} onChange={handleChange}/>
+            <Form.Control type="password" placeholder="Password" name="confirmPassword" value={formdata.confirmPassword} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Text style={{color:"red"}}>{err}</Form.Text>
             </Form>

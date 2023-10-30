@@ -4,23 +4,22 @@ import { nanoid } from "@ant-design/pro-components";
 import Mail from "./Mail";
 import { getUsermail } from "../Store/CreateSlice";
 
-export default function SentBox() {
-    const dispatch = useDispatch()
+export default function Deleted() {
+    const dispatch=useDispatch()
     useEffect(() => {
         dispatch(getUsermail())
     },[])
-    const {allMail,usermail } = useSelector(state => state.mailbox) 
+    const { allMail, usermail } = useSelector(state => state.mailbox)
     return (
         <div>
-            <div>
-             {allMail.filter(mail => mail.sender === usermail && !mail.deleted[usermail]).map((mail,i) => {
+             {allMail.filter(mail =>mail.deleted[usermail]).map((mail,i) => {
                  return (
-                     <Mail key={nanoid()} i={i} mail={mail} sent={true} />
+                     <Mail key={nanoid()} i={i} mail={mail} />
                      
                     )
                 })}
-                </div>
+                
         </div>
-        
     )
+    
 }

@@ -117,19 +117,8 @@ export const updateMail = createAsyncThunk(
               "Content-type": "application/json"
             },
             body: JSON.stringify({
-                sender: payload.maildata.sender,
-                receiver: payload.maildata.receiver,
-                subject: payload.maildata.subject,
-                body: payload.maildata.body,
-                read: payload.read,
-                deleted: {
-                    ...payload.maildata.delete,
-                    [payload.usermail]:payload.delete
-                },
-                star: {
-                    ...payload.maildata.star,
-                    [payload.usermail]:payload.star
-                }
+               ...payload
+                
             })
           }).then((res) => {
               if (res.ok) {
@@ -165,11 +154,7 @@ const mailboxSlice = createSlice({
         [getAllMail.fulfilled]: (state, action) => {
             state.isLoading = false
             if (action.payload) {
-                const a = Object.entries(action.payload);
-                const allData = a.map((e) => {
-                    return { ...e[1], id: e[0] };
-                });
-                
+                const allData = Object.entries(action.payload);
                 state.allMail = allData
                
             }

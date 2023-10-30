@@ -2,8 +2,7 @@ import React from "react";
 import "./Mail.css"
 import { useDispatch, useSelector } from "react-redux";
 import { activateInboxId, activateSentboxId, updateMail } from "../Store/CreateSlice";
-import { Accordion } from "react-bootstrap";
-import { FaStar } from "react-icons/fa";
+import { FaCircle, FaDumpster, FaStar } from "react-icons/fa";
 
 
 export default function Mail(props) {
@@ -11,52 +10,47 @@ export default function Mail(props) {
   console.log('mail',props.mail)
   const{usermail}=useSelector(state=>state.mailbox)
   const dispatch = useDispatch()
-  function update_read_status() {
-    dispatch(updateMail({
-      id: id,
-      usermail:usermail,
-      maildata: props.mail,
-      read: true,
-      deleted: false,
-      star:star
-    }))
 
-  }
   
   function update_star_status() {
-    if (receiver === usermail) {
     dispatch(updateMail({
       id: id,
       usermail:usermail,
-      maildata: props.mail,
-      read:read,
-      deleted: false,
-      star:!star
+      star:!star[usermail]
     }))
   }
+  function delete_mail() {
+    dispatch(updateMail({
+      id: id,
+      usermail:usermail,
+      deleted:true
+    }))
+}
 
-  }
   function open_mail() {
     if (!props.sent) {
       dispatch(activateInboxId(id))
     } else {
       dispatch(activateSentboxId(id))
     }
-    if (!read) {
-      update_read_status()
+    if (!read && !props.sent) {
+      dispatch(updateMail({
+        id: id,
+        read: true,
+      }))
     }
   }
   
     return (
       <div
-        onClick={open_mail}
         style={{ background:"skyblue"}}>
-                    <div className="mail-bar">
-          <div
-            className="circle" style={{ visibility: read ? "hidden" : "visible" ,display:props.sent?"none":"block"}}></div>
-          <FaStar style={{color:star[usermail]?"yellow":"grey",display:props.sent?"none":"block"}} onClick={update_star_status}/>
+        <div className="mail-bar">
+          <FaDumpster onClick={delete_mail}/>
+          <FaCircle style={{visibility:read?"hidden":"visible", color:'skyblue'}}/>
+          <FaStar style={{color:star[usermail]?"yellow":"grey"}} onClick={update_star_status}/>
           <div>{props.sent?receiver:sender}</div>
-                        <div>
+        
+                        <div onClick={open_mail} >
                         {subject}
                         </div>
         </div>

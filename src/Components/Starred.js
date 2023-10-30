@@ -8,7 +8,7 @@ export default function Starred() {
     const { allMail, usermail } = useSelector(state => state.mailbox)
     return (
         <Accordion>
-             {allMail.filter(mail => mail.receiver === usermail && mail.star).map((mail,i) => {
+             {allMail.filter(mail =>mail.star[usermail] && !mail.deleted[usermail]).map((mail,i) => {
                  return (
                      <Mail key={nanoid()} i={i} mail={mail} />
                      
